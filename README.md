@@ -21,7 +21,7 @@ A Laravel package that enables logging to a separate database with a clean inter
 1. Add the package to your Laravel project:
 
 ```bash
-composer faanigee/db-logger
+composer faanigee/dblogger
 ```
 
 2. Publish the configuration file:
@@ -70,12 +70,13 @@ Add the logs database connection to `config/database.php`:
     ],
 ],
 ```
-```
+
+````
 5. Run the migrations:
 
 ```bash
 php artisan migrate
-```
+````
 
 ## Usage
 
@@ -106,7 +107,7 @@ DbLogger::info('Reference Id', 'Reference Type', 'Message', [
 ]);
 
 // Log with extra data
-DbLogger::error('API Error', ['error_code' => 500], [
+DbLogger::error('Reference Id', 'Reference Type', 'API Error', ['error_code' => 500], [
     'request_data' => $request->all(),
     'response' => $response->json()
 ]);
@@ -114,16 +115,9 @@ DbLogger::error('API Error', ['error_code' => 500], [
 
 ### Accessing the Log Viewer
 
-The package comes with a built-in log viewer. Add the following to your `web.php` routes file:
+The package comes with a built-in log viewer, just visit the following url:
 
-```php
-Route::group(['middleware' => ['web', 'auth']], function () {
-    Route::get('logs', [Packages\DbLogger\Http\Controllers\LogController::class, 'index'])->name('dblogger.logs.index');
-    Route::get('logs/{log}', [Packages\DbLogger\Http\Controllers\LogController::class, 'show'])->name('dblogger.logs.show');
-});
-```
-
-Then visit `/logs` in your browser to view the logs.
+Then visit `/db-logs` in your browser to view the logs.
 
 ### Customizing Views
 
