@@ -77,21 +77,8 @@
 								$log->response_status }}</span>
 						</dd>
 
-						<dt class="col-sm-3">Message</dt>
-						<dd class="col-sm-9">{{ $log->message }}</dd>
-
-						<dt class="col-sm-3">Context</dt>
-						<dd class="col-sm-9">
-							<pre><code class="json">@formatJson($log->context)</code></pre>
-						</dd>
-
-						<dt class="col-sm-3">Extra Data</dt>
-						<dd class="col-sm-9">
-							<pre><code class="json">{!! \Faanigee\DbLogger\Helpers\JsonFormatter::formatJsonForDisplay($log->extra) !!}</code></pre>
-						</dd>
-
-						<dt class="col-sm-3">Created By</dt>
-						<dd class="col-sm-9">{{ $log->created_by ?? 'System' }}</dd>
+						<dt class="col-sm-3">Creator Name</dt>
+						<dd class="col-sm-9">{{ $log->user_name ?? 'System' }}</dd>
 
 						<dt class="col-sm-3">IP Address</dt>
 						<dd class="col-sm-9">{{ $log->ip_address }}</dd>
@@ -99,11 +86,24 @@
 						<dt class="col-sm-3">User Agent</dt>
 						<dd class="col-sm-9">{{ $log->user_agent }}</dd>
 
-						<dt class="col-sm-3">Created At</dt>
+						<dt class="col-sm-3">Dated</dt>
 						<dd class="col-sm-9">{{ $log->created_at->format('d F Y ( H:i:s )') }}</dd>
 
-						<dt class="col-sm-3">Updated At</dt>
-						<dd class="col-sm-9">{{ $log->updated_at->format('d F Y ( H:i:s )') }}</dd>
+						<dt class="col-sm-3">Message</dt>
+						<dd class="col-sm-9 text-info">{{ $log->message }}</dd>
+
+						<dt class="col-sm-3">Context</dt>
+						<dd class="col-sm-9">
+							<pre><code class="json">@formatJson($log->context)</code></pre>
+						</dd>
+
+						@if(count($log->extra) > 0)
+						<dt class="col-sm-3">Extra Data</dt>
+						<dd class="col-sm-9">
+							<pre><code class="json">@formatJson($log->extra)</code></pre>
+						</dd>
+						@endIf
+
 					</dl>
 				</div>
 			</div>

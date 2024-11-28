@@ -1,140 +1,211 @@
 # DbLogger Package for Laravel
 
-A Laravel package that enables logging to a separate database with a clean interface and built-in log viewer.
+A powerful and flexible database logging package for Laravel applications that supports batch logging, queued operations, and context enrichment.
 
 ## Features
 
-- Store logs in a separate database
-- Configurable database connection
-- Built-in log viewer with filtering capabilities
+- Simple integration with Laravel applications
+- Database-backed persistent logging
 - Support for all standard log levels
-- Log retention policy
-- Capture additional context (IP, User Agent, User ID)
+- Request context logging
+- User tracking
+- Batch logging support
+- Asynchronous (queued) logging
+- Context enrichment
+- Configurable retention policies
+- Log viewer interface
 
 ## Requirements
 
-- PHP ^8.1
-- Laravel ^10.0
+- PHP >= 8.1
+- Laravel >= 10.0
+- Database support (MySQL, PostgreSQL, etc.)
+- Redis (optional, for queue support)
 
 ## Installation
 
-1. Add the package to your Laravel project:
-
+1. Install the package via Composer:
 ```bash
-composer faanigee/dblogger
+composer require faanigee/dblogger
 ```
 
 2. Publish the configuration file:
-
 ```bash
 php artisan vendor:publish --provider="Faanigee\DbLogger\DbLoggerServiceProvider" --tag="config"
+
 ```
-
-3. Publish the views (optional):
-
+## Publish the views (optional):
 ```bash
 php artisan vendor:publish --provider="Faanigee\DbLogger\DbLoggerServiceProvider" --tag="views"
 ```
 
-4. Configure your environment variables:
-
+## Enviroment Variables
 ```env
 LOG_DB_CONNECTION=log_db
-LOG_DB_HOST=127.0.0.1
+LOG_DB_HOST=mariadb
 LOG_DB_PORT=3306
-LOG_DB_DATABASE=laravel_logs
-LOG_DB_USERNAME=your_username
-LOG_DB_PASSWORD=your_password
-LOG_RETENTION_DAYS=30
+LOG_DB_DATABASE=accounts_logs
+LOG_DB_USERNAME=root
+LOG_DB_PASSWORD=
 LOG_LEVEL=debug
+
+DB_LOGGER_RETENTION_DAYS=30
+DB_LOGGER_BATCH_SIZE=100
+DB_LOGGER_BATCH_TIMEOUT=120
+DB_LOGGER_QUEUE_NAME=db_logger
+DB_LOGGER_QUEUE_CONNECTION=radis
+
 ```
 
-Add the logs database connection to `config/database.php`:
+## Add connection for database in config/database.php
 
-```database.php
+```php
 'connections' => [
-    // ... other connections
-
-    'logs' => [
-        'driver' => 'mysql',
-        'host' => env('LOG_DB_HOST', '127.0.0.1'),
-        'port' => env('LOG_DB_PORT', '3306'),
-        'database' => env('LOG_DB_DATABASE', 'logs'),
-        'username' => env('LOG_DB_USERNAME', 'forge'),
-        'password' => env('LOG_DB_PASSWORD', ''),
-        'charset' => 'utf8mb4',
-        'collation' => 'utf8mb4_unicode_ci',
-        'prefix' => '',
-        'strict' => true,
-        'engine' => null,
+        'log_db' => [
+            'driver' => 'mysql',
+            'host' => env('LOG_DB_HOST', '127.0.0.1'),
+            'port' => env('LOG_DB_PORT', '3306'),
+            'database' => env('LOG_DB_DATABASE', 'logs_database'),
+            'username' => env('LOG_DB_USERNAME', 'root'),
+            'password' => env('LOG_DB_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
+        ],
     ],
-],
 ```
 
-````
-5. Run the migrations:
+3. Configure your database connection in `config/dblogger.php`:
+```php
+return [
+    'queue' => [
+        'enabled' => env('DB_LOGGER_QUEUE_ENABLED', false),
+        'connection' => env('DB_LOGGER_QUEUE_CONNECTION', 'redis'),
+        'queue' => env('DB_LOGGER_QUEUE_NAME', 'logs'),
+    ],
+    'batch' => [
+        'size' => env('DB_LOGGER_BATCH_SIZE', 100),
+        'timeout' => env('DB_LOGGER_BATCH_TIMEOUT', 30),
+    ],
+    'retention' => [
+        'days' => env('DB_LOGGER_RETENTION_DAYS', 90),
+        'levels' => [
+            'emergency' => 365,
+            'alert' => 180,
+            'critical' => 180,
+            'error' => 90,
+            'warning' => 60,
+            'notice' => 30,
+            'info' => 30,
+            'debug' => 15,
+        ],
+    ],
+];
+```
 
+4. Run the migrations:
 ```bash
 php artisan migrate
-````
+```
 
 ## Usage
 
 ### Basic Logging
 
 ```php
-use Packages\DbLogger\Facades\DbLogger;
+use Faanigee\DbLogger\Facades\DbLogger;
 
-// Log messages with different severity levels
-DbLogger::info(1234555, 'Cash Payment', 'Cash Voucher Posted Successfully', [
-    'user_id' => auth()?->id(),
-    'user_name' => auth()?->name,
-    'response_status' => 'Success',
-]);
-DbLogger::debug(1234555, 'Cash Payment', 'Failed: Cash Voucher Posting Failed, Exception Occured', [
-    'user_id' => auth()?->id(),
-    'user_name' => auth()?->name,
-    'response_status' => 'Failed',
-    'request_info' => $request->all(),
-    'error' => $error->getMessage(),
-    'trace' => $error->getTraceAsString(),
-]);
+// Simple logging
+DbLogger::info($ref_id, $ref_type, 'User logged in successfully');
 
-// Log with additional context
-DbLogger::info('Reference Id', 'Reference Type', 'Message', [
-    'user_id' => 1,
-    'action' => 'profile_updated'
-]);
-
-// Log with extra data
-DbLogger::error('Reference Id', 'Reference Type', 'API Error', ['error_code' => 500], [
-    'request_data' => $request->all(),
-    'response' => $response->json()
-]);
+// Logging with context
+DbLogger::error($ref_id, $ref_type, 'Payment failed', ['amount' => 100, 'currency' => 'USD']);
 ```
+
+### Batch Logging
+
+```php
+use Faanigee\DbLogger\Facades\DbLogger;
+
+$entries = [
+    [
+        'level' => 'info',
+        'ref_id' => 1,
+        'ref_type' => 'user',
+        'message' => 'User created',
+        'context' => ['email' => 'user@example.com']
+    ],
+    [
+        'level' => 'info',
+        'ref_id' => 1,
+        'ref_type' => 'profile',
+        'message' => 'Profile updated',
+        'context' => ['fields' => ['name', 'avatar']]
+    ]
+];
+
+DbLogger::logBatch($entries);
+```
+
+### Asynchronous Logging
+
+```php
+use Faanigee\DbLogger\Facades\DbLogger;
+
+// Log asynchronously using queues
+DbLogger::logAsync('info', $ref_id, $ref_type, 'Processing started', ['job_id' => 123]);
+```
+
+### Enhanced Context Logging
+
+```php
+use Faanigee\DbLogger\Facades\DbLogger;
+
+// Log with automatically enriched context
+DbLogger::logWithContext($ref_id, $ref_type, 'Action performed', ['custom' => 'data']);
+```
+
+### Available Log Levels
+
+- emergency
+- alert
+- critical
+- error
+- warning
+- notice
+- info
+- debug
 
 ### Accessing the Log Viewer
 
 The package comes with a built-in log viewer, just visit the following url:
 
-Then visit `/db-logs` in your browser to view the logs.
-
-### Customizing Views
-
-If you've published the views, you can find them in `resources/views/vendor/dblogger/`. Modify them according to your needs.
+- List view: `/db-logs`
+- Detail view: `/db-logs/{id}`
 
 ### Configuration
 
-The package configuration file (`config/dblogger.php`) allows you to:
+You can customize the package behavior through the `config/dblogger.php` file:
 
 - Configure the database connection
+- Configure queue settings for async logging
+- Set batch processing parameters
 - Set log retention period
-- Define minimum log level
+- Customize database connection
 - Customize pagination settings
+
 
 ### Cleanup Old Logs
 
-To automatically clean up old logs based on the retention period, add the following to your `app/Console/Kernel.php`:
+Run the cleanup command to remove old logs based on retention policy:
+
+```bash
+php artisan logs:cleanup
+```
+
+Or schedule it in your `App\Console\Kernel`:
 
 ```php
 protected function schedule(Schedule $schedule)
@@ -143,9 +214,6 @@ protected function schedule(Schedule $schedule)
 }
 ```
 
-## Contributing
-
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
 ## Security
 

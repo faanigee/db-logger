@@ -1,7 +1,7 @@
 <?php
 
 return [
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Logging Database Connection
     |--------------------------------------------------------------------------
@@ -11,9 +11,9 @@ return [
     | your application database.
     |
     */
-    'connection' => env('LOG_DB_CONNECTION', 'log_db'),
+	'connection' => env('LOG_DB_CONNECTION', 'log_db'),
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Database Connections
     |--------------------------------------------------------------------------
@@ -23,23 +23,23 @@ return [
     | application database.
     |
     */
-    'connections' => [
-        'log_db' => [
-            'driver' => 'mysql',
-            'host' => env('LOG_DB_HOST', '127.0.0.1'),
-            'port' => env('LOG_DB_PORT', '3306'),
-            'database' => env('LOG_DB_DATABASE', 'logs_database'),
-            'username' => env('LOG_DB_USERNAME', 'root'),
-            'password' => env('LOG_DB_PASSWORD', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'strict' => true,
-            'engine' => null,
-        ],
-    ],
+	'connections' => [
+		'log_db' => [
+			'driver' => 'mysql',
+			'host' => env('DB_LOGGER_HOST', '127.0.0.1'),
+			'port' => env('DB_LOGGER_PORT', '3306'),
+			'database' => env('DB_LOGGER_DATABASE', 'logs_database'),
+			'username' => env('DB_LOGGER_USERNAME', 'root'),
+			'password' => env('DB_LOGGER_PASSWORD', ''),
+			'charset' => 'utf8mb4',
+			'collation' => 'utf8mb4_unicode_ci',
+			'prefix' => '',
+			'strict' => true,
+			'engine' => null,
+		],
+	],
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Log Retention Policy
     |--------------------------------------------------------------------------
@@ -48,9 +48,21 @@ return [
     | period will be automatically cleaned up by the package.
     |
     */
-    'retention_days' => env('LOG_RETENTION_DAYS', 30),
+	'retention' => [
+		'days' => env('DB_LOGGER_RETENTION_DAYS', 90),
+		'levels' => [
+			'emergency' => 365,
+			'alert' => 180,
+			'critical' => 180,
+			'error' => 90,
+			'warning' => 60,
+			'notice' => 30,
+			'info' => 30,
+			'debug' => 15,
+		],
+	],
 
-    /*
+	/*
     |--------------------------------------------------------------------------
     | Log Level
     |--------------------------------------------------------------------------
@@ -60,5 +72,30 @@ return [
     | are ignored. Options: debug, info, notice, warning, error, critical, alert, emergency
     |
     */
-    'level' => env('LOG_LEVEL', 'debug'),
+	'level' => env('LOG_LEVEL', 'debug'),
+
+	/*
+    |--------------------------------------------------------------------------
+    | Log queue
+    |--------------------------------------------------------------------------
+    
+    */
+	'queue' => [
+		'enabled' => env('DB_LOGGER_QUEUE_ENABLED', false),
+		'connection' => env('DB_LOGGER_QUEUE_CONNECTION', 'redis'),
+		'queue' => env('DB_LOGGER_QUEUE_NAME', 'logs'),
+	],
+
+	/*
+    |--------------------------------------------------------------------------
+    | Log batch
+    |--------------------------------------------------------------------------
+    
+    */
+
+	'batch' => [
+		'size' => env('DB_LOGGER_BATCH_SIZE', 100),
+		'timeout' => env('DB_LOGGER_BATCH_TIMEOUT', 30),
+	],
+
 ];
