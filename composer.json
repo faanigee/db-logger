@@ -1,0 +1,31 @@
+{
+	"name": "faanigee/dblogger",
+	"description": "Generate Logs for BK Accounts Module",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "IrfanAhmad",
+			"email": "irfanahmad@msn.com"
+		}
+	],
+	"require": {
+		"php": "^8.1",
+		"illuminate/support": "^10.0",
+		"illuminate/database": "^10.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"Faanigee\\DbLogger\\": "src/"
+		}
+	},
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Faanigee\\DbLogger\\DbLoggerServiceProvider"
+			]
+		}
+	},
+	"minimum-stability": "dev",
+	"prefer-stable": true
+}
