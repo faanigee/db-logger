@@ -11,7 +11,7 @@ return [
     | your application database.
     |
     */
-	'connection' => 'log_db',
+	'connection' => env('DB_LOGGER_CONNECTION', 'log_db'),
 
 	/*
     |--------------------------------------------------------------------------
@@ -26,11 +26,11 @@ return [
 
 	'log_db' => [
 		'driver' => 'mysql',
-		'host' => env('DB_LOGGER_HOST', '127.0.0.1'),
-		'port' => env('DB_LOGGER_PORT', '3306'),
-		'database' => env('DB_LOGGER_DATABASE', 'logging_db'),
-		'username' => env('DB_LOGGER_USERNAME', 'root'),
-		'password' => env('DB_LOGGER_PASSWORD', ''),
+		'host' => env('DB_LOGGER_HOST', env('DB_HOST', '127.0.0.1')),
+		'port' => env('DB_LOGGER_PORT', env('DB_PORT', '3306')),
+		'database' => env('DB_LOGGER_DATABASE', env('DB_DATABASE', 'logging_db')),
+		'username' => env('DB_LOGGER_USERNAME', env('DB_USERNAME', 'root')),
+		'password' => env('DB_LOGGER_PASSWORD', env('DB_PASSWORD', '')),
 		'charset' => 'utf8mb4',
 		'collation' => 'utf8mb4_unicode_ci',
 		'prefix' => '',

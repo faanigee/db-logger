@@ -31,10 +31,8 @@ return new class extends Migration
             $table->double('response_time')->nullable();
 
             $table->timestamps();
-            $table->index('created_at');
 
             // add index to level, ref_type, ref_id and created_at
-            $table->index('level');
             $table->index('ref_id');
             $table->index('ref_type');
             $table->index('created_at');

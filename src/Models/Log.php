@@ -40,6 +40,7 @@ class Log extends Model
 		['level', 'created_at'],
 		['ref_id', 'ref_type'],
 	];
+
 	use HasFactory;
 
 	/**

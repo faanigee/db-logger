@@ -22,9 +22,10 @@ class DbLoggerServiceProvider extends ServiceProvider
 		$this->mergeConfigFrom(__DIR__ . '/../config/dblogger.php', 'dblogger');
 
 		// Merge the database connection configuration
-		$connection = config('dblogger.log_db');
+		$connectionData = config('dblogger.log_db');
+		$connectionName = config('dblogger.connection');
 		config([
-			'database.connections.log_db' => $connection
+			'database.connections.' . $connectionName => $connectionData
 		]);
 
 		$this->app->bind('dblogger', function ($app) {
