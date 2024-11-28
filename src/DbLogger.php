@@ -2,10 +2,15 @@
 
 namespace Faanigee\DbLogger;
 
-use Illuminate\Contracts\Foundation\Application;
 use Faanigee\DbLogger\Models\Log;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Queue;
+use Faanigee\DbLogger\Jobs\LogMessage;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Contracts\Foundation\Application;
 
 class DbLogger
 {
@@ -153,5 +158,69 @@ class DbLogger
 	public function debug($ref_id, $ref_type, string $message, array $context = []): Log
 	{
 		return $this->log('debug', $ref_id, $ref_type, $message, $context);
+	}
+
+	/**
+	 * Log multiple entries in a single transaction.
+	 *
+	 * @param array $entries Array of log entries
+	 * @return \Illuminate\Support\Collection
+	 */
+	public function logBatch(array $entries): Collection
+	{
+		return DB::transaction(function () use ($entries) {
+			return collect($entries)->map(function ($entry) {
+				return $this->log(
+					$entry['level'],
+					$entry['ref_id'],
+					$entry['ref_type'],
+					$entry['message'],
+					$entry['context'] ?? [],
+					$entry['extra'] ?? []
+				);
+			});
+		});
+	}
+
+	/**
+	 * Log with enriched context.
+	 *
+	 * @param mixed $ref_id
+	 * @param string $ref_type
+	 * @param string $message
+	 * @param array $context
+	 * @return \Faanigee\DbLogger\Models\Log
+	 */
+	public function logWithContext($ref_id, string $ref_type, string $message, array $context = []): Log
+	{
+		$enrichedContext = array_merge($context, [
+			'session_id' => session()->getId(),
+			'correlation_id' => uniqid(),
+			'environment' => Config::get('app.env'),
+			'timestamp' => now()->toIso8601String()
+		]);
+
+		return $this->log('info', $ref_id, $ref_type, $message, $enrichedContext);
+	}
+
+	/**
+	 * Log a message asynchronously using the queue.
+	 *
+	 * @param string $level
+	 * @param mixed $ref_id
+	 * @param string $ref_type
+	 * @param string $message
+	 * @param array $context
+	 * @param array $extra
+	 * @return void
+	 */
+	public function logAsync(string $level, $ref_id, string $ref_type, string $message, array $context = [], array $extra = []): void
+	{
+		if (Config::get('db-logger.queue.enabled', false)) {
+			Queue::connection(Config::get('db-logger.queue.connection', 'redis'))
+				->push(new LogMessage($level, $ref_id, $ref_type, $message, $context, $extra));
+		} else {
+			$this->log($level, $ref_id, $ref_type, $message, $context, $extra);
+		}
 	}
 }

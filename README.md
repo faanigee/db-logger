@@ -41,12 +41,12 @@ php artisan vendor:publish --provider="Faanigee\DbLogger\DbLoggerServiceProvider
 
 ## Enviroment Variables
 ```env
-LOG_DB_CONNECTION=log_db
-LOG_DB_HOST=mariadb
-LOG_DB_PORT=3306
-LOG_DB_DATABASE=accounts_logs
-LOG_DB_USERNAME=root
-LOG_DB_PASSWORD=
+DB_LOGGER_CONNECTION=DB_LOGGER
+DB_LOGGER_HOST=mariadb
+DB_LOGGER_PORT=3306
+DB_LOGGER_DATABASE=accounts_logs
+DB_LOGGER_USERNAME=root
+DB_LOGGER_PASSWORD=
 LOG_LEVEL=debug
 
 DB_LOGGER_RETENTION_DAYS=30

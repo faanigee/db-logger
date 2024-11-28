@@ -8,6 +8,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Log extends Model
 {
+	/**
+	 * The indexes that should be created for the model.
+	 *
+	 * @var array
+	 */
+	protected $indexes = [
+		'level',
+		'ref_id',
+		'ref_type',
+		'created_at',
+		'created_by',
+		['level', 'created_at'],
+		['ref_id', 'ref_type'],
+	];
 	use HasFactory;
 
 	/**
@@ -63,6 +77,11 @@ class Log extends Model
 	public function scopeLevel($query, string $level)
 	{
 		return $query->where('level', $level);
+	}
+
+	public function scopeRefId($query, string $ref_no)
+	{
+		return $query->where('ref_id', $ref_no);
 	}
 
 	public function user()

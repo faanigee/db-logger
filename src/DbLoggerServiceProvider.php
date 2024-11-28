@@ -7,6 +7,14 @@ use Illuminate\Support\ServiceProvider;
 class DbLoggerServiceProvider extends ServiceProvider
 {
 	/**
+	 * The middleware aliases.
+	 *
+	 * @var array
+	 */
+	protected $middlewareAliases = [
+		'log.requests' => \Faanigee\DbLogger\Http\Middleware\LogRequests::class,
+	];
+	/**
 	 * Register services.
 	 */
 	public function register(): void

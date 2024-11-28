@@ -20,16 +20,20 @@ class LogController extends Controller
             $query->level($request->level);
         }
 
-        if ($request->has('start_date')) {
+        if ($request->has('ref_no') && $request->ref_no != null) {
+            $query->RefId($request->ref_no);
+        }
+
+        if ($request->has('start_date') && $request->start_date != null) {
             $query->where('created_at', '>=', $request->start_date);
         }
 
-        if ($request->has('end_date')) {
+        if ($request->has('end_date') && $request->end_date != null) {
             $query->where('created_at', '<=', $request->end_date . ' 23:59:59');
         }
 
         $logs = $query->orderBy('created_at', 'desc')
-            ->paginate(config('dblogger.pagination.per_page', 15));
+            ->cursorPaginate(config('dblogger.pagination.per_page', 15));
 
         return view('dblogger::logs.index', compact('logs'));
     }
