@@ -1,3 +1,12 @@
+@isset($pageConfigs)
+{!! Helper::updatePageConfig($pageConfigs) !!}
+@endisset
+
+@php
+// $configData = Helper::appClasses();
+// dd($configData);
+@endphp
+
 @extends('layouts/layoutMaster')
 
 @section('title', 'Accounts - Logs')
@@ -9,8 +18,10 @@
 @section('page-style')
 <style>
 	pre {
-		background: #f8f8f8;
-		border: 1px solid #ddd;
+		background: #1e2638;
+		/* background: #f6f8fa; */
+		/* border-left: 4px solid #f28d1a; */
+		border: 1px solid #10141e;
 		border-radius: 3px;
 		margin: 15px 0;
 	}
@@ -22,6 +33,8 @@
 		padding: 10px;
 		color: #333;
 		overflow-x: auto;
+		border-left: 3px solid #f28d1a;
+
 	}
 
 	.json-string {
@@ -29,7 +42,7 @@
 	}
 
 	.json-number {
-		color: #0000ff;
+		color: #032f62;
 	}
 
 	.json-boolean {
@@ -41,7 +54,7 @@
 	}
 
 	.json-key {
-		color: #a52a2a;
+		color: #e36209;
 	}
 </style>
 @endsection

@@ -73,7 +73,6 @@
 						<table class="table table-hover">
 							<thead>
 								<tr>
-									<th>Sr#</th>
 									<th>Date</th>
 									<th>Ref #</th>
 									<th>Level</th>
@@ -85,7 +84,6 @@
 							<tbody>
 								@foreach($logs as $index => $log)
 								<tr>
-									<td>{{ ++$index }}</td>
 									<td>{{ $log->created_at->format('d-m-Y') }}</td>
 									<td>{{ $log?->ref_id ?? '-' }}</td>
 									<td><span class="badge bg-{{ ($log->level == 'error') ? 'danger' : $log->level }}">{{
