@@ -9,6 +9,24 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Log extends Model
 {
 	/**
+	 * The connection name for the model.
+	 *
+	 * @var string
+	 */
+	protected $connection;
+
+	/**
+	 * Create a new model instance.
+	 *
+	 * @param array $attributes
+	 */
+	public function __construct(array $attributes = [])
+	{
+		parent::__construct($attributes);
+		$this->connection = config('dblogger.connection');
+	}
+
+	/**
 	 * The indexes that should be created for the model.
 	 *
 	 * @var array
@@ -29,7 +47,6 @@ class Log extends Model
 	 *
 	 * @var string
 	 */
-	protected $connection = 'log_db';
 	protected $table = 'main-logs';
 
 	/**

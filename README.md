@@ -41,7 +41,7 @@ php artisan vendor:publish --provider="Faanigee\DbLogger\DbLoggerServiceProvider
 
 ## Enviroment Variables
 ```env
-DB_LOGGER_CONNECTION=DB_LOGGER
+DB_LOGGER_CONNECTION=log_db
 DB_LOGGER_HOST=mariadb
 DB_LOGGER_PORT=3306
 DB_LOGGER_DATABASE=accounts_logs
@@ -57,51 +57,51 @@ DB_LOGGER_QUEUE_CONNECTION=radis
 
 ```
 
-## Add connection for database in config/database.php
+## Add connection for database in config/database.php if Database connection error occured (Optional)
 
 ```php
 'connections' => [
-        'log_db' => [
-            'driver' => 'mysql',
-            'host' => env('LOG_DB_HOST', '127.0.0.1'),
-            'port' => env('LOG_DB_PORT', '3306'),
-            'database' => env('LOG_DB_DATABASE', 'logs_database'),
-            'username' => env('LOG_DB_USERNAME', 'root'),
-            'password' => env('LOG_DB_PASSWORD', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'strict' => true,
-            'engine' => null,
-        ],
-    ],
+	'log_db' => [
+		'driver' => 'mysql',
+		'host' => env('LOG_DB_HOST', '127.0.0.1'),
+		'port' => env('LOG_DB_PORT', '3306'),
+		'database' => env('LOG_DB_DATABASE', 'logs_database'),
+		'username' => env('LOG_DB_USERNAME', 'root'),
+		'password' => env('LOG_DB_PASSWORD', ''),
+		'charset' => 'utf8mb4',
+		'collation' => 'utf8mb4_unicode_ci',
+		'prefix' => '',
+		'strict' => true,
+		'engine' => null,
+	],
+],
 ```
 
 3. Configure your database connection in `config/dblogger.php`:
 ```php
 return [
-    'queue' => [
-        'enabled' => env('DB_LOGGER_QUEUE_ENABLED', false),
-        'connection' => env('DB_LOGGER_QUEUE_CONNECTION', 'redis'),
-        'queue' => env('DB_LOGGER_QUEUE_NAME', 'logs'),
-    ],
-    'batch' => [
-        'size' => env('DB_LOGGER_BATCH_SIZE', 100),
-        'timeout' => env('DB_LOGGER_BATCH_TIMEOUT', 30),
-    ],
-    'retention' => [
-        'days' => env('DB_LOGGER_RETENTION_DAYS', 90),
-        'levels' => [
-            'emergency' => 365,
-            'alert' => 180,
-            'critical' => 180,
-            'error' => 90,
-            'warning' => 60,
-            'notice' => 30,
-            'info' => 30,
-            'debug' => 15,
-        ],
-    ],
+	'queue' => [
+		'enabled' => env('DB_LOGGER_QUEUE_ENABLED', false),
+		'connection' => env('DB_LOGGER_QUEUE_CONNECTION', 'redis'),
+		'queue' => env('DB_LOGGER_QUEUE_NAME', 'logs'),
+	],
+	'batch' => [
+		'size' => env('DB_LOGGER_BATCH_SIZE', 100),
+		'timeout' => env('DB_LOGGER_BATCH_TIMEOUT', 30),
+	],
+	'retention' => [
+		'days' => env('DB_LOGGER_RETENTION_DAYS', 90),
+		'levels' => [
+			'emergency' => 365,
+			'alert' => 180,
+			'critical' => 180,
+			'error' => 90,
+			'warning' => 60,
+			'notice' => 30,
+			'info' => 30,
+			'debug' => 15,
+		],
+	],
 ];
 ```
 
@@ -130,20 +130,20 @@ DbLogger::error($ref_id, $ref_type, 'Payment failed', ['amount' => 100, 'currenc
 use Faanigee\DbLogger\Facades\DbLogger;
 
 $entries = [
-    [
-        'level' => 'info',
-        'ref_id' => 1,
-        'ref_type' => 'user',
-        'message' => 'User created',
-        'context' => ['email' => 'user@example.com']
-    ],
-    [
-        'level' => 'info',
-        'ref_id' => 1,
-        'ref_type' => 'profile',
-        'message' => 'Profile updated',
-        'context' => ['fields' => ['name', 'avatar']]
-    ]
+	[
+		'level' => 'info',
+		'ref_id' => 1,
+		'ref_type' => 'user',
+		'message' => 'User created',
+		'context' => ['email' => 'user@example.com']
+	],
+	[
+		'level' => 'info',
+		'ref_id' => 1,
+		'ref_type' => 'profile',
+		'message' => 'Profile updated',
+		'context' => ['fields' => ['name', 'avatar']]
+	]
 ];
 
 DbLogger::logBatch($entries);
@@ -210,7 +210,7 @@ Or schedule it in your `App\Console\Kernel`:
 ```php
 protected function schedule(Schedule $schedule)
 {
-    $schedule->command('dblogger:cleanup')->daily();
+	$schedule->command('dblogger:cleanup')->daily();
 }
 ```
 
