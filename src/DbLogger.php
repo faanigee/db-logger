@@ -50,12 +50,12 @@ class DbLogger
 			'message' => $message,
 			'context' => $context,
 			'extra' => $extra,
+			'response_status' => $context['response_status'] ?? null,
 
 			'request_method' => Request::method(),
 			'request_path' => Request::path(),
 			'request_headers' => Request::header(),
 			'request_body' => Request::all(),
-			'response_status' => $context['response_status'] ?? null,
 			'response_time' => microtime(true) - LARAVEL_START ?? null,
 
 			'created_by' => Auth::id() ?? null,
@@ -73,6 +73,7 @@ class DbLogger
 	 */
 	public function emergency($ref_id, $ref_type, string $message, array $context = []): Log
 	{
+		$context['response_status'] = $context['response_status'] ?? 'Failed';
 		return $this->log('emergency', $ref_id, $ref_type, $message, $context);
 	}
 
@@ -85,6 +86,7 @@ class DbLogger
 	 */
 	public function alert($ref_id, $ref_type, string $message, array $context = []): Log
 	{
+		$context['response_status'] = $context['response_status'] ?? 'Failed';
 		return $this->log('alert', $ref_id, $ref_type, $message, $context);
 	}
 
@@ -97,6 +99,7 @@ class DbLogger
 	 */
 	public function critical($ref_id, $ref_type, string $message, array $context = []): Log
 	{
+		$context['response_status'] = $context['response_status'] ?? 'Failed';
 		return $this->log('critical', $ref_id, $ref_type, $message, $context);
 	}
 
@@ -109,6 +112,7 @@ class DbLogger
 	 */
 	public function error($ref_id, $ref_type, string $message, array $context = []): Log
 	{
+		$context['response_status'] = $context['response_status'] ?? 'Failed';
 		return $this->log('error', $ref_id, $ref_type, $message, $context);
 	}
 
@@ -121,6 +125,7 @@ class DbLogger
 	 */
 	public function warning($ref_id, $ref_type, string $message, array $context = []): Log
 	{
+		$context['response_status'] = $context['response_status'] ?? 'Failed';
 		return $this->log('warning', $ref_id, $ref_type, $message, $context);
 	}
 
@@ -133,6 +138,7 @@ class DbLogger
 	 */
 	public function notice($ref_id, $ref_type, string $message, array $context = []): Log
 	{
+		$context['response_status'] = $context['response_status'] ?? 'Failed';
 		return $this->log('notice', $ref_id, $ref_type, $message, $context);
 	}
 
@@ -145,6 +151,7 @@ class DbLogger
 	 */
 	public function info($ref_id, $ref_type, string $message, array $context = []): Log
 	{
+		$context['response_status'] = $context['response_status'] ?? 'Success';
 		return $this->log('info', $ref_id, $ref_type, $message, $context);
 	}
 
@@ -157,6 +164,7 @@ class DbLogger
 	 */
 	public function debug($ref_id, $ref_type, string $message, array $context = []): Log
 	{
+		$context['response_status'] = $context['response_status'] ?? 'Failed';
 		return $this->log('debug', $ref_id, $ref_type, $message, $context);
 	}
 

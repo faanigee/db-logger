@@ -43,7 +43,7 @@ class LogController extends Controller
      */
     public function show($log)
     {
-        $pageConfigs = ['myLayout' => 'blank', 'myStyle' => 'dark', 'contentLayout' => 'wide'];
+        $pageConfigs = ['myLayout' => 'blank', 'myStyle' => config('dblogger.myStyle'), 'contentLayout' => 'wide'];
         $log = Log::find($log);
         // dd($log);
         return view('dblogger::logs.show', compact('log', 'pageConfigs'));

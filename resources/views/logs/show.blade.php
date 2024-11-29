@@ -18,12 +18,20 @@
 @section('page-style')
 <style>
 	pre {
-		background: #1e2638;
-		/* background: #f6f8fa; */
-		/* border-left: 4px solid #f28d1a; */
-		border: 1px solid #10141e;
 		border-radius: 3px;
 		margin: 15px 0;
+	}
+
+	pre.theme-dark {
+		background: #1e2638;
+		border: 1px solid #10141e;
+		color: #e1e4e8;
+	}
+
+	pre.theme-light {
+		background: #f6f8fa;
+		border: 1px solid #e1e4e8;
+		color: #24292e;
 	}
 
 	pre code {
@@ -107,13 +115,14 @@
 
 						<dt class="col-sm-3">Context</dt>
 						<dd class="col-sm-9">
-							<pre><code class="json">@formatJson($log->context)</code></pre>
+							<pre
+								class="theme-{{ $pageConfigs['myStyle'] }}"><code class="json">@formatJson($log->context)</code></pre>
 						</dd>
 
 						@if(count($log->extra) > 0)
 						<dt class="col-sm-3">Extra Data</dt>
 						<dd class="col-sm-9">
-							<pre><code class="json">@formatJson($log->extra)</code></pre>
+							<pre class="theme-{{ $pageConfigs['myStyle'] }}"><code class="json">@formatJson($log->extra)</code></pre>
 						</dd>
 						@endIf
 
