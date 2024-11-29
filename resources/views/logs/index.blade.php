@@ -75,9 +75,11 @@
 								<tr>
 									<th>Date</th>
 									<th>Ref #</th>
+									<th>Type</th>
 									<th>Level</th>
 									<th>Message</th>
 									<th>Created By</th>
+									<th>Status</th>
 									<th>Actions</th>
 								</tr>
 							</thead>
@@ -86,10 +88,13 @@
 								<tr>
 									<td>{{ $log->created_at->format('d-m-Y') }}</td>
 									<td>{{ $log?->ref_id ?? '-' }}</td>
+									<td>{{ $log?->ref_type ?? '-' }}</td>
 									<td><span class="badge bg-{{ ($log->level == 'error') ? 'danger' : $log->level }}">{{
 											$log->level }}</span></td>
 									<td>{{ Str::limit($log->message, 80) }}</td>
 									<td>{{ $log?->user_name ?? 'System' }}</td>
+									<td><span class="badge bg-{{ ($log->level == 'error') ? 'danger' : $log->level }}">{{
+											$log?->response_status ?? '-' }}</span></td>
 									<td>
 										<a href="{{ route('dblogger.logs.show', $log) }}" class="btn btn-sm btn-info">
 											View
