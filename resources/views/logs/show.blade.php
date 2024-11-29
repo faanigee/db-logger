@@ -50,7 +50,7 @@
 	}
 
 	.json-number {
-		color: #032f62;
+		color: #89b6e8;
 	}
 
 	.json-boolean {

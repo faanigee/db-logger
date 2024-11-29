@@ -54,7 +54,7 @@ DB_LOGGER_BATCH_SIZE=100
 DB_LOGGER_BATCH_TIMEOUT=120
 DB_LOGGER_QUEUE_NAME=db_logger
 DB_LOGGER_QUEUE_CONNECTION=radis
-
+DB_LOGGER_STYLE=light
 ```
 
 ## Add connection for database in config/database.php if Database connection error occured (Optional)
