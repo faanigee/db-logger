@@ -5,6 +5,7 @@
 @php
 // $configData = Helper::appClasses();
 // dd($configData);
+$contentLayout = "layout-wide";
 @endphp
 
 @extends('layouts/layoutMaster')

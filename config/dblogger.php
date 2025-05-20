@@ -106,4 +106,16 @@ return [
     */
     'myStyle' => env('DB_LOGGER_STYLE', 'light'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | UI Settings
+    |--------------------------------------------------------------------------
+    |
+    | Configuration for the user interface of the logger.
+    |
+    */
+    'enable_filters' => env('DB_LOGGER_ENABLE_FILTERS', true),
+    'per_page' => env('DB_LOGGER_PER_PAGE', 100),
+    'date_format' => env('DB_LOGGER_DATE_FORMAT', 'Y-m-d H:i:s'),
+    'dark_mode' => env('DB_LOGGER_DARK_MODE', false),
 ];
